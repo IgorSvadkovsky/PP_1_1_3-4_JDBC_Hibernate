@@ -20,18 +20,11 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void createUsersTable() {
         try (Connection connection = util.connectToDb()){
-            DatabaseMetaData databaseMetaData = connection.getMetaData();
-            ResultSet rs = databaseMetaData.getTables(null, null, tableName, null);
-
-            if (rs.next()) {
-                System.out.println("Table '" + tableName + "' already exists");
-            } else {
-                connection.createStatement().executeUpdate(String.format("CREATE TABLE %s " +
-                        "(id BIGINT PRIMARY KEY AUTO_INCREMENT, " +
-                        "name VARCHAR(30), " +
-                        "lastName VARCHAR(30), " +
-                        "age TINYINT)", tableName));
-            }
+            connection.createStatement().executeUpdate(String.format("CREATE TABLE IF NOT EXISTS %s " +
+                    "(id BIGINT PRIMARY KEY AUTO_INCREMENT, " +
+                    "name VARCHAR(30), " +
+                    "lastName VARCHAR(30), " +
+                    "age TINYINT)", tableName));
         } catch(SQLException e){
             e.printStackTrace();
         }
@@ -39,14 +32,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void dropUsersTable() {
         try (Connection connection = util.connectToDb()){
-            DatabaseMetaData databaseMetaData = connection.getMetaData();
-            ResultSet rs = databaseMetaData.getTables(null, null, tableName, null);
-
-            if (rs.next()) {
-                connection.createStatement().executeUpdate(String.format("DROP TABLE %s;" , tableName));
-            } else {
-                System.out.println(String.format("Table '%s' does not exist", tableName));
-            }
+            connection.createStatement().executeUpdate(String.format("DROP TABLE IF EXISTS %s;" , tableName));
         } catch(SQLException e){
             e.printStackTrace();
         }
