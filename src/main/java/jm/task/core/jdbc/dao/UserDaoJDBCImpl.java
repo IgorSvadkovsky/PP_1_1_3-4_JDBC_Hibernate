@@ -8,18 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
-    private String url = "jdbc:mysql://localhost:3306/problem_1_1_3";
-    private String username = "root";
-    private String password = "root";
-    private String tableName = "users_test";
-    Util util = new Util(url, username, password);
+    private final String tableName = "users_test";
 
     public UserDaoJDBCImpl() {
 
     }
 
     public void createUsersTable() {
-        try (Connection connection = util.connectToDb()){
+        try (Connection connection = Util.connectToDb()){
             connection.createStatement().executeUpdate(String.format("CREATE TABLE IF NOT EXISTS %s " +
                     "(id BIGINT PRIMARY KEY AUTO_INCREMENT, " +
                     "name VARCHAR(30), " +
@@ -31,7 +27,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void dropUsersTable() {
-        try (Connection connection = util.connectToDb()){
+        try (Connection connection = Util.connectToDb()){
             connection.createStatement().executeUpdate(String.format("DROP TABLE IF EXISTS %s;" , tableName));
         } catch(SQLException e){
             e.printStackTrace();
@@ -39,7 +35,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        try (Connection connection = util.connectToDb()){
+        try (Connection connection = Util.connectToDb()){
             PreparedStatement preparedStatement = connection.prepareStatement(
                     String.format("INSERT INTO %s (name, lastName, age) VALUES (?, ?, ?);" , tableName));
 
@@ -55,7 +51,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void removeUserById(long id) {
-        try (Connection connection = util.connectToDb()){
+        try (Connection connection = Util.connectToDb()){
             PreparedStatement preparedStatement = connection.prepareStatement(
                     String.format("DELETE FROM %s WHERE id = ?;" , tableName));
 
@@ -70,7 +66,7 @@ public class UserDaoJDBCImpl implements UserDao {
     public List<User> getAllUsers() {
         List<User> userList = new ArrayList<>();
 
-        try (Connection connection = util.connectToDb()){
+        try (Connection connection = Util.connectToDb()){
             ResultSet rs = connection.createStatement().executeQuery(String.format("SELECT * FROM %s;" , tableName));
 
             while (rs.next()) {
@@ -91,7 +87,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void cleanUsersTable() {
-        try (Connection connection = util.connectToDb()){
+        try (Connection connection = Util.connectToDb()){
             connection.createStatement().executeUpdate(String.format("DELETE FROM %s;" , tableName));
         } catch (SQLException e) {
             e.printStackTrace();
